@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 import { analyticsApi } from './services/api';
 import { ThemeProvider } from './hooks/useTheme';
@@ -19,15 +19,15 @@ function App() {
   useEffect(() => {
     const trackPageView = () => {
       analyticsApi.trackEvent('page_view', {
-        path: window.location.pathname,
+        path: window.location.hash.replace('#', '') || '/',
         title: document.title,
         referrer: document.referrer
       }).catch(() => {});
     };
     trackPageView();
     const handleRouteChange = () => trackPageView();
-    window.addEventListener('popstate', handleRouteChange);
-    return () => window.removeEventListener('popstate', handleRouteChange);
+    window.addEventListener('hashchange', handleRouteChange);
+    return () => window.removeEventListener('hashchange', handleRouteChange);
   }, []);
 
   return (
